@@ -161,8 +161,8 @@ spec:
   clusterSelector:
     matchLabels:
       hccm: enabled
-  repoURL: https://charts.hetzner.cloud/hcloud
-  chartName: hcloud-cloud-controller-manager
+  repoURL: https://charts.hetzner.cloud
+  chartName: hcloud/hcloud-cloud-controller-manager
   valuesTemplate: |
     env:
       HCLOUD_NETWORK:
