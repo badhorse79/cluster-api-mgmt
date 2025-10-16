@@ -1,0 +1,4 @@
+bootstrap: "talos"
+controlplane: "talos"
+infrastructure: "hetzner"
+addon: "helm"

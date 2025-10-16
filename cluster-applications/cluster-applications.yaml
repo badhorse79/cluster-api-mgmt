@@ -1,0 +1,48 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hcloud-cloud-controller-manager
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.hetzner.cloud
+    path: hcloud/hcloud-cloud-controller-manager
+    valuesTemplate: |
+      env:
+        HCLOUD_NETWORK:
+          valueFrom:
+            secretKeyRef:
+              name: hetzner
+              key: network
+        HCLOUD_TOKEN:
+          valueFrom:
+            secretKeyRef:
+              name: hetzner
+              key: hcloud
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hcloud-cloud-controller-manager
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    path: ingress-nginx
+    valuesTemplate: |
+      controller:
+        service:
+          annotations:
+            load-balancer.hetzner.cloud/location: "fsn1"
+            load-balancer.hetzner.cloud/name: "talos-cluster-lb"
+            load-balancer.hetzner.cloud/use-private-ip: "true"
+            load-balancer.hetzner.cloud/type: "lb11"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
