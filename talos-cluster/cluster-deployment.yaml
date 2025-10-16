@@ -6,6 +6,7 @@ metadata:
   labels:
     argoCDChart: enabled
     clusterapps: enabled
+    hccm: enabled
 spec:
   clusterNetwork:
     pods:
@@ -151,6 +152,34 @@ spec:
           network:
             cni: null
       talosVersion: v1.11
+---
+apiVersion: addons.cluster.x-k8s.io/v1alpha1
+kind: HelmChartProxy
+metadata:
+  name: hcloud-cloud-controller-manager
+spec:
+  clusterSelector:
+    matchLabels:
+      hccm: enabled
+  repoURL: https://charts.hetzner.cloud/hcloud
+  chartName: hcloud-cloud-controller-manager
+  valuesTemplate: |
+    env:
+      HCLOUD_NETWORK:
+        valueFrom:
+          secretKeyRef:
+            name: hetzner
+            key: network
+      HCLOUD_TOKEN:
+        valueFrom:
+          secretKeyRef:
+            name: hetzner
+            key: hcloud
+  namespace: kube-system
+  options:
+    waitForJobs: true
+    wait: true
+    timeout: 5m
 ---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy

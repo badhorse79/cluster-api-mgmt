@@ -2,33 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: hcloud-cloud-controller-manager
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://charts.hetzner.cloud
-    path: hcloud/hcloud-cloud-controller-manager
-    valuesTemplate: |
-      env:
-        HCLOUD_NETWORK:
-          valueFrom:
-            secretKeyRef:
-              name: hetzner
-              key: network
-        HCLOUD_TOKEN:
-          valueFrom:
-            secretKeyRef:
-              name: hetzner
-              key: hcloud
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: kube-system
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: hcloud-cloud-controller-manager
+  name: ingress-nginx
   namespace: argocd
 spec:
   project: default
