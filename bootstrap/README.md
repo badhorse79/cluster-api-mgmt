@@ -31,3 +31,6 @@ talosctl config merge cluster-talosconfig
 export TALOS_CONTROL_PLANE_IP=`kubectl --kubeconfig kubeconfig get nodes -o wide | grep control-plane | awk -F' ' '{print $6}'`
 talosctl -n $TALOS_CONTROL_PLANE_IP version
 talosctl -n $TALOS_CONTROL_PLANE_IP dashboard
+
+
+kubectl --kubeconfig kubeconfig get secret -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d

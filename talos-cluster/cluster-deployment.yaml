@@ -222,11 +222,13 @@ spec:
             targetRevision: HEAD
         destination:
           server: https://kubernetes.default.svc
-          namespace: default
+          namespace: cluster-apps
         syncPolicy:
           automated:
             prune: true
             selfHeal: false
+          syncOptions:
+            - CreateNamespace=true
   options:
     waitForJobs: true
     wait: true
