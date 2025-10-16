@@ -1,5 +1,17 @@
 # Cluster api management
 
+Requirements:
+ - helm
+ - clusterctl
+ - talosctl
+ - kind
+ - kubectl
+ 
+Also:
+ - hetzner project with api token and ssh key
+ - talos snapshot in your project
+
+
 ## Bootstrap
 
 // create kind cluster
@@ -60,5 +72,10 @@ kubectl --kubeconfig kubeconfig port-forward svc/argocd-server -n argocd 8081:44
 // get load balancer ip
 kubectl --kubeconfig kubeconfig get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
+// test connection
 curl -H 'Host: hello.local' http://91.98.13.171
 
+// cleanup
+kubectl delete cluster talos-cluster -n talos-cluster
+kind delete cluster
+// manually delete ingress loadbalancer since it doesn't seem to be deleted
