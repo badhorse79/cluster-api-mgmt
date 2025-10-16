@@ -161,7 +161,7 @@ spec:
   clusterSelector:
     matchLabels:
       hccm: enabled
-  repoURL: https://charts.hetzner.cloud/hcloud/
+  repoURL: https://charts.hetzner.cloud
   chartName: hcloud-cloud-controller-manager
   namespace: kube-system
   valuesTemplate: |
