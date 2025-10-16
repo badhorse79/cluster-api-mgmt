@@ -2,35 +2,60 @@
 
 ## Bootstrap
 
+// create kind cluster
 kind create cluster
 
+// prep helm repositories
 helm repo add capi-operator https://kubernetes-sigs.github.io/cluster-api-operator
 helm repo add jetstack https://charts.jetstack.io --force-update
 helm repo update
 
+// install cert-manager and capi-operator on local cluster
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
 helm install capi-operator capi-operator/cluster-api-operator --create-namespace -n capi-operator-system -f capi-values.yaml --wait --timeout 90s
 
+// This is where I should create a management template cluster and move mgmt cluster to that
+
+// Deploy argo on mgmt cluster
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-argocd admin initial-password -n argocd
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+// you can port forward to argo ui
 
+
+// Apply workload cluster application on cluster
 kubectl apply -n argocd -f talos-cluster-application.yaml
-
+// Create hetzner secret after cluster namespace have been created
+// really should be part of argo deploy
 export HCLOUD_TOKEN=<token>
 kubectl create secret generic hetzner --from-literal=hcloud=$HCLOUD_TOKEN -n talos-cluster
 kubectl patch secret hetzner -p '{"metadata":{"labels":{"clusterctl.cluster.x-k8s.io/move":""}}}' -n talos-cluster
 
+// cluster should know be created
+kubectl get cluster -n talos-cluster
+clusterctl describe cluster talos-cluster -n talos-cluster
+
+// argo ui port forward
+kubectl port-forward svc/argocd-server -n argocd 8080:443 --address=0.0.0.0
+
+// we can also get kubeconfig for workload cluster
 clusterctl get kubeconfig -n talos-cluster talos-cluster > kubeconfig
 
+// and talos config
 kubectl get secret -n talos-cluster talos-cluster-talosconfig -o jsonpath='{.data.talosconfig}' | base64 -d > cluster-talosconfig
 talosctl config merge cluster-talosconfig
-
 export TALOS_CONTROL_PLANE_IP=`kubectl --kubeconfig kubeconfig get nodes -o wide | grep control-plane | awk -F' ' '{print $6}'`
 talosctl -n $TALOS_CONTROL_PLANE_IP version
 talosctl -n $TALOS_CONTROL_PLANE_IP dashboard
 
+// when cluster is up connect to it
+k9s --kubeconfig kubeconfig
 
+// get argo secret from workload cluster
 kubectl --kubeconfig kubeconfig get secret -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+
+// portforward to argo on workload cluster
+kubectl --kubeconfig kubeconfig port-forward svc/argocd-server -n argocd 8081:443 --address=0.0.0.0
+
+curl -H 'Host: hello.local' http://
+
