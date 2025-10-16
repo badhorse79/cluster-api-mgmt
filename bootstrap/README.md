@@ -21,6 +21,9 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 // you can port forward to argo ui
+kubectl port-forward svc/argocd-server -n argocd 8080:443 --address=0.0.0.0
+// get argo secret from local cluster
+kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 
 
 // Apply workload cluster application on cluster
@@ -34,9 +37,6 @@ kubectl patch secret hetzner -p '{"metadata":{"labels":{"clusterctl.cluster.x-k8
 // cluster should know be created
 kubectl get cluster -n talos-cluster
 clusterctl describe cluster talos-cluster -n talos-cluster
-
-// argo ui port forward
-kubectl port-forward svc/argocd-server -n argocd 8080:443 --address=0.0.0.0
 
 // we can also get kubeconfig for workload cluster
 clusterctl get kubeconfig -n talos-cluster talos-cluster > kubeconfig
@@ -57,5 +57,8 @@ kubectl --kubeconfig kubeconfig get secret -n argocd argocd-initial-admin-secret
 // portforward to argo on workload cluster
 kubectl --kubeconfig kubeconfig port-forward svc/argocd-server -n argocd 8081:443 --address=0.0.0.0
 
-curl -H 'Host: hello.local' http://
+// get load balancer ip
+kubectl --kubeconfig kubeconfig get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+curl -H 'Host: hello.local' http://91.98.13.171
 
