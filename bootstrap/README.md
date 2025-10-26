@@ -91,7 +91,8 @@ hubble --kubeconfig kubeconfig observe
 # auto portforward to hubble ui
 cilium --kubeconfig kubeconfig hubble ui
 
-# cleanup
+# cleanup (delete argo first or it will re-create)
+kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 kubectl delete cluster talos-cluster -n talos-cluster
 kind delete cluster
 # manually delete ingress loadbalancer since it doesn't seem to be deleted
