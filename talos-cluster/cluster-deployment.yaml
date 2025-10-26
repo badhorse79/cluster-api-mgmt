@@ -190,6 +190,13 @@ spec:
     ingressController:
       enabled: true
       loadbalancerMode: dedicated
+      ingressLBAnnotationPrefixes: ["load-balancer.hetzner.cloud"]
+      service:
+        annotations:
+          load-balancer.hetzner.cloud/location: "fsn1"
+          load-balancer.hetzner.cloud/name: "talos-cluster-lb"
+          load-balancer.hetzner.cloud/use-private-ip: "true"
+          load-balancer.hetzner.cloud/type: "lb11"
     hubble:
       relay:
         enabled: true
