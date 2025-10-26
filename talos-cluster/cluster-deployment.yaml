@@ -200,6 +200,8 @@ spec:
     hubble:
       relay:
         enabled: true
+      ui:
+        enabled: true
   options:
     waitForJobs: true
     wait: true
