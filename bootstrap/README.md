@@ -6,6 +6,8 @@ Requirements:
  - talosctl
  - kind
  - kubectl
+ - cilium cli
+ - hubble cli
  
 Also:
  - hetzner project with api token and ssh key
@@ -72,10 +74,22 @@ kubectl --kubeconfig kubeconfig get secret -n argocd argocd-initial-admin-secret
 kubectl --kubeconfig kubeconfig port-forward svc/argocd-server -n argocd 8081:443 --address=0.0.0.0
 
 # get load balancer ip
-kubectl --kubeconfig kubeconfig get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+#old nginx: kubectl --kubeconfig kubeconfig get service ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+#cilium: 
+kubectl --kubeconfig kubeconfig get service cilium-ingress -n kube-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 
 # test connection
 curl -H 'Host: hello.local' http://91.98.13.171
+
+# cilium
+cilium --kubeconfig kubeconfig status --wait # get status
+
+# hubble
+hubble --kubeconfig kubeconfig status
+hubble --kubeconfig kubeconfig observe
+
+# auto portforward to hubble ui
+cilium --kubeconfig kubeconfig hubble ui
 
 # cleanup
 kubectl delete cluster talos-cluster -n talos-cluster
