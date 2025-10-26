@@ -166,7 +166,7 @@ spec:
   clusterSelector:
     matchLabels:
       cilium: enabled
-  repoURL: https://helm.cilium.io/cilium
+  repoURL: https://helm.cilium.io
   chartName: cilium
   namespace: kube-system
   valuesTemplate: |
