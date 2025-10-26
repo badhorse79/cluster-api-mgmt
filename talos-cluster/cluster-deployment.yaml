@@ -258,7 +258,7 @@ spec:
         sources:
           - repoURL: https://github.com/badhorse79/cluster-api-mgmt.git
             path: cluster-applications
-            targetRevision: HEAD
+            targetRevision: cillium
         destination:
           server: https://kubernetes.default.svc
           namespace: cluster-apps

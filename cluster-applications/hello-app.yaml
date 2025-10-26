@@ -38,7 +38,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: cilium
   rules:
     - host: hello.local
       http:
