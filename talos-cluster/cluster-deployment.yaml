@@ -100,6 +100,10 @@ spec:
         cluster:
           network:
             cni: null
+      - |
+        cluster:
+          proxy:
+            disabled: true
       talosVersion: v1.11
   infrastructureTemplate:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
