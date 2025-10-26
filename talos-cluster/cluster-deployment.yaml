@@ -189,7 +189,7 @@ spec:
     k8sServicePort: 7445
     ingressController:
       enabled: true
-      loadbalancerMode: dedicated
+      loadbalancerMode: shared
       ingressLBAnnotationPrefixes: ["load-balancer.hetzner.cloud"]
       service:
         annotations:
