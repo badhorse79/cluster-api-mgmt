@@ -7,6 +7,7 @@ metadata:
     argoCDChart: enabled
     clusterapps: enabled
     hccm: enabled
+    cilium: enabled
 spec:
   clusterNetwork:
     pods:
@@ -150,8 +151,42 @@ spec:
       - |
         cluster:
           network:
-            cni: null
+            cni: none
+      - |
+        cluster:
+          proxy:
+            disabled: true
       talosVersion: v1.11
+---
+apiVersion: addons.cluster.x-k8s.io/v1alpha1
+kind: HelmChartProxy
+metadata:
+  name: cillium
+spec:
+  clusterSelector:
+    matchLabels:
+      cilium: enabled
+  repoURL: https://helm.cilium.io/cilium
+  chartName: cilium
+  namespace: kube-system
+  valuesTemplate: |
+    ipam:
+      mode: kubernetes
+    kubeProxyReplacement: true
+    securityContext:
+      capabilities:
+        ciliumAgent: ["CHOWN","KILL","NET_ADMIN","NET_RAW","IPC_LOCK","SYS_ADMIN","SYS_RESOURCE","DAC_OVERRIDE","FOWNER","SETGID","SETUID"]
+        cleanCiliumState: ["NET_ADMIN","SYS_ADMIN","SYS_RESOURCE"]
+    cgroup:
+      autoMount:
+        enabled: false
+      hostRoot: "/sys/fs/cgroup"
+    k8sServiceHost: "localhost"
+    k8sServicePort: 7443
+  options:
+    waitForJobs: true
+    wait: true
+    timeout: 5m
 ---
 apiVersion: addons.cluster.x-k8s.io/v1alpha1
 kind: HelmChartProxy
