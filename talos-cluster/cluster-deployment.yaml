@@ -190,6 +190,9 @@ spec:
     ingressController:
       enabled: true
       loadbalancerMode: dedicated
+    hubble:
+      relay:
+        enabled: true
   options:
     waitForJobs: true
     wait: true
